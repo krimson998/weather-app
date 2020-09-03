@@ -1,6 +1,10 @@
 <template>
   <div class="flex flex-col">
-    <tr v-for="(item, index) in savedLocally" :key="item.location" class="flex">
+    <tr
+      v-for="(item, index) in savedLocally"
+      :key="item.location"
+      class="flex align-center"
+    >
       <div>
         <td class="border px-4 py-2">{{ index + 1 }}</td>
         <td class="border px-4 py-2">{{ item.location }}</td>
@@ -11,8 +15,9 @@
         <td class="border px-4 py-2">{{ item.windSpeed }}km/h</td>
         <td class="border px-4 py-2">{{ item.humidity }}%</td>
       </div>
-
-      <button class="ml-8" @click="removeLocation(index)">Remove</button>
+      <div>
+        <button class="ml-8" @click="removeLocation(index)">Remove</button>
+      </div>
     </tr>
   </div>
 </template>
@@ -37,6 +42,9 @@ export default {
   methods: {
     removeLocation(x) {
       this.savedLocally.splice(x, 1)
+      const parsed = JSON.stringify(this.savedLocally)
+      localStorage.setItem('savedLocally', parsed)
+      console.log(this.savedLocally)
     },
   },
 }

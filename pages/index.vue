@@ -71,7 +71,7 @@
     </v-main>
     <div class="mt-6 mb-20">
       <table class="table-auto">
-        <thead>
+        <thead class="w-2/3">
           <tr>
             <th class="px-4 py-2">Index</th>
             <th class="px-4 py-2">Location</th>
@@ -161,6 +161,13 @@ export default {
               this.info.humidity = response.data.current.humidity
               this.info.description =
                 response.data.current.weather[0].description
+              if (!this.info.location) {
+                return
+              }
+              this.savedLocally = [
+                ...this.savedLocally,
+                Object.assign({}, this.info),
+              ]
             })
         })
     },
