@@ -6,23 +6,31 @@
         fluid
       >
         <input
-          v-model.lazy="location"
-          class="bg-white w-1/3 mb-12 mt-20 focus:outline-none focus:shadow-outline border border-gray-500 text-black rounded-lg py-2 px-4 block appearance-none leading-normal"
+          v-model.lazy="info.location"
+          class="bg-white w-1/3 mb-6 mt-20 focus:outline-none focus:shadow-outline border border-gray-500 text-black rounded-lg py-2 px-4 block appearance-none leading-normal"
           type="city"
-          placeholder="Etnry your location"
+          placeholder="Entry your location"
         />
-        <button
-          class="bg-blue-500 rounded py-1 px-2 mb-10"
-          @click="showWeather"
-        >
-          show weather
-        </button>
+        <div class="flex w-1/3 justify-space-around">
+          <button
+            class="bg-blue-500 rounded py-1 px-2 mb-6"
+            @click="showWeather"
+          >
+            Show weather
+          </button>
+          <button
+            class="bg-blue-500 rounded py-1 px-2 mb-6"
+            @click="saveLocally"
+          >
+            Save locally
+          </button>
+        </div>
         <template class="bg-white">
           <v-card class="mx-auto shadow" min-width="400" max-width="600">
             <v-list-item two-line>
               <v-list-item-content>
                 <v-list-item-title class="headline">{{
-                  location
+                  info.location
                 }}</v-list-item-title>
                 <v-list-item-subtitle>{{
                   info.timestamp
@@ -61,40 +69,46 @@
         </template>
       </v-container>
     </v-main>
-    <table class="table-auto mb-20">
-      <thead>
-        <tr>
-          <th class="px-4 py-2">Location</th>
-          <th class="px-4 py-2">Timestamp</th>
-          <th class="px-4 py-2">Timezone</th>
-          <th class="px-4 py-2">Weather description</th>
-          <th class="px-4 py-2">Temperature</th>
-          <th class="px-4 py-2">Wind Speed</th>
-          <th class="px-4 py-2">Humidity</th>
-        </tr>
-      </thead>
+    <div class="mt-6 mb-20">
+      <table class="table-auto">
+        <thead>
+          <tr>
+            <th class="px-4 py-2">Location</th>
+            <th class="px-4 py-2">Timestamp</th>
+            <th class="px-4 py-2">Timezone</th>
+            <th class="px-4 py-2">Weather description</th>
+            <th class="px-4 py-2">Temperature</th>
+            <th class="px-4 py-2">Wind Speed</th>
+            <th class="px-4 py-2">Humidity</th>
+          </tr>
+        </thead>
+      </table>
       <tbody>
-        <tr>
-          <td class="border px-4 py-2">{{ location }}</td>
-          <td class="border px-4 py-2">{{ info.timestamp }}</td>
-          <td class="border px-4 py-2">{{ info.timezone }}</td>
-          <td class="border px-4 py-2">{{ info.description }}</td>
-          <td class="border px-4 py-2">{{ info.temp }}&deg;C</td>
-          <td class="border px-4 py-2">{{ info.windSpeed }}km/h</td>
-          <td class="border px-4 py-2">{{ info.humidity }}%</td>
-        </tr>
+        <weatherTable :saved-locally="savedLocally" />
       </tbody>
-    </table>
+    </div>
   </div>
 </template>
 
 <script>
+/* :location="location.location"
+          :timestamp="location.timestamp"
+          :timezone="location.timezone"
+          :description="ilocation.description"
+          :temp="location.temp"
+          :wind-speed="location.windSpeed"
+          :humidity="location.humidity" */
 import axios from 'axios'
+import weatherTable from '../components/weatherTable.vue'
 export default {
+  components: {
+    weatherTable,
+  },
   data() {
     return {
-      location: '',
+      savedLocally: [],
       info: {
+        location: 'Kyiv',
         timezone: null,
         timestamp: null,
         temp: null,
@@ -107,11 +121,14 @@ export default {
       time: 0,
     }
   },
+  mounted() {
+    this.showWeather()
+  },
   methods: {
     showWeather() {
       axios
         .get(
-          `https://api.opencagedata.com/geocode/v1/json?q=${this.location}&key=d4068ba58b4745d8b650068739c713d3`
+          `https://api.opencagedata.com/geocode/v1/json?q=${this.info.location}&key=d4068ba58b4745d8b650068739c713d3`
         )
         .then((response) => {
           this.info.lat = response.data.results[0].geometry.lat
@@ -130,6 +147,36 @@ export default {
               this.info.humidity = response.data.current.humidity
               this.info.description =
                 response.data.current.weather[0].description
+            })
+        })
+    },
+    saveLocally() {
+      axios
+        .get(
+          `https://api.opencagedata.com/geocode/v1/json?q=${this.info.location}&key=d4068ba58b4745d8b650068739c713d3`
+        )
+        .then((response) => {
+          this.info.lat = response.data.results[0].geometry.lat
+          this.info.lon = response.data.results[0].geometry.lng
+          this.info.timestamp = response.data.timestamp.created_http
+
+          axios
+            .get(
+              `https://api.openweathermap.org/data/2.5/onecall?lat=${this.info.lat}&lon=${this.info.lon}&units=metric&exclude=hourly,daily,minutely&appid=106c18242227a70ac3dc99786ba74228`
+            )
+
+            .then((response) => {
+              this.info.timezone = response.data.timezone
+              this.info.temp = response.data.current.temp
+              this.info.windSpeed = response.data.current.wind_speed
+              this.info.humidity = response.data.current.humidity
+              this.info.description =
+                response.data.current.weather[0].description
+              this.savedLocally = [
+                ...this.savedLocally,
+                Object.assign({}, this.info),
+              ]
+              console.log(this.savedLocally)
             })
         })
     },
