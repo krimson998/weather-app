@@ -73,6 +73,7 @@
       <table class="table-auto">
         <thead>
           <tr>
+            <th class="px-4 py-2">Index</th>
             <th class="px-4 py-2">Location</th>
             <th class="px-4 py-2">Timestamp</th>
             <th class="px-4 py-2">Timezone</th>
@@ -121,9 +122,22 @@ export default {
       time: 0,
     }
   },
+  watch: {
+    localArray(newArray) {
+      localStorage.savedLocally = newArray
+    },
+  },
   mounted() {
     this.showWeather()
+    if (localStorage.getItem('savedLocally')) {
+      try {
+        this.savedLocally = JSON.parse(localStorage.getItem('savedLocally'))
+      } catch (e) {
+        localStorage.removeItem('savedLocally')
+      }
+    }
   },
+
   methods: {
     showWeather() {
       axios
@@ -172,10 +186,15 @@ export default {
               this.info.humidity = response.data.current.humidity
               this.info.description =
                 response.data.current.weather[0].description
+              if (!this.info.location) {
+                return
+              }
               this.savedLocally = [
                 ...this.savedLocally,
                 Object.assign({}, this.info),
               ]
+              const parsed = JSON.stringify(this.savedLocally)
+              localStorage.setItem('savedLocally', parsed)
               console.log(this.savedLocally)
             })
         })
