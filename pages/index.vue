@@ -69,7 +69,7 @@
         </template>
       </v-container>
     </v-main>
-    <div class="mt-6 lg:mb-20 lg:w-4/6 overflow-x-auto" min-width="375">
+    <div class="mt-6 pb-10 lg:mb-20 lg:w-4/6 overflow-x-auto" min-width="375">
       <table class="table-auto">
         <thead>
           <tr>
