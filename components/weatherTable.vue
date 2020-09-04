@@ -31,6 +31,7 @@ export default {
   },
 
   methods: {
+    /* Удаление объекта из массива (обычное и локальное) */
     removeLocation(x) {
       this.savedLocally.splice(x, 1)
       const parsed = JSON.stringify(this.savedLocally)

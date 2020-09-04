@@ -85,6 +85,7 @@
         </thead>
       </table>
       <tbody>
+        <!-- Передача данных компоненту -->
         <weatherTable :saved-locally="savedLocally" />
       </tbody>
     </div>
@@ -115,11 +116,13 @@ export default {
       time: 0,
     }
   },
+  /* Слежение за значением массива */
   watch: {
     localArray(newArray) {
       localStorage.savedLocally = newArray
     },
   },
+  /* Управление загрузкой значения из localStorage */
   mounted() {
     this.showWeather()
     if (localStorage.getItem('savedLocally')) {
@@ -132,7 +135,9 @@ export default {
   },
 
   methods: {
+    /* Функция для  просмотра погоды и сохранения данных в таблице */
     showWeather() {
+      /* Запрос с получением координат локации, по её названию */
       axios
         .get(
           `https://api.opencagedata.com/geocode/v1/json?q=${this.info.location}&key=d4068ba58b4745d8b650068739c713d3`
@@ -141,7 +146,7 @@ export default {
           this.info.lat = response.data.results[0].geometry.lat
           this.info.lon = response.data.results[0].geometry.lng
           this.info.timestamp = response.data.timestamp.created_http
-
+          /* Запрос с получением данных о погоде по координатам */
           axios
             .get(
               `https://api.openweathermap.org/data/2.5/onecall?lat=${this.info.lat}&lon=${this.info.lon}&units=metric&exclude=hourly,daily,minutely&appid=106c18242227a70ac3dc99786ba74228`
@@ -154,9 +159,11 @@ export default {
               this.info.humidity = response.data.current.humidity
               this.info.description =
                 response.data.current.weather[0].description
+              /* Проверка на пустое поле ввода */
               if (!this.info.location) {
                 return
               }
+              /* Сохранение и обновления данных в массиве */
               this.savedLocally = [
                 ...this.savedLocally,
                 Object.assign({}, this.info),
@@ -164,7 +171,9 @@ export default {
             })
         })
     },
+    /* Функция для  просмотра погоды и локального сохранения данных в таблице */
     saveLocally() {
+      /* Запрос с получением координат локации, по её названию */
       axios
         .get(
           `https://api.opencagedata.com/geocode/v1/json?q=${this.info.location}&key=d4068ba58b4745d8b650068739c713d3`
@@ -173,7 +182,7 @@ export default {
           this.info.lat = response.data.results[0].geometry.lat
           this.info.lon = response.data.results[0].geometry.lng
           this.info.timestamp = response.data.timestamp.created_http
-
+          /* Запрос с получением данных о погоде по координатам */
           axios
             .get(
               `https://api.openweathermap.org/data/2.5/onecall?lat=${this.info.lat}&lon=${this.info.lon}&units=metric&exclude=hourly,daily,minutely&appid=106c18242227a70ac3dc99786ba74228`
@@ -186,13 +195,16 @@ export default {
               this.info.humidity = response.data.current.humidity
               this.info.description =
                 response.data.current.weather[0].description
+              /* Проверка на пустое поле ввода */
               if (!this.info.location) {
                 return
               }
+              /* Сохранение и обновления данных в массиве */
               this.savedLocally = [
                 ...this.savedLocally,
                 Object.assign({}, this.info),
               ]
+              /* Локальное сохранение */
               const parsed = JSON.stringify(this.savedLocally)
               localStorage.setItem('savedLocally', parsed)
             })
