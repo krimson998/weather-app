@@ -7,9 +7,9 @@
     >
       <div class="ml-4">
         <td class="border px-5 py-2">{{ index + 1 }}</td>
-        <td class="border px-5 py-2">{{ item.location }}</td>
-        <td class="border px-5 py-2">{{ item.timestamp }}</td>
-        <td class="border px-5 py-2">{{ item.timezone }}</td>
+        <td class="border px-5 py-2 w-32">{{ item.location }}</td>
+        <td class="border px-5 py-2 w-40">{{ item.timestamp }}</td>
+        <td class="border px-5 py-2 w-40">{{ item.timezone }}</td>
         <td class="border px-5 py-2">{{ item.description }}</td>
         <td class="border px-5 py-2">{{ Math.floor(item.temp) }}&deg;C</td>
         <td class="border px-5 py-2">{{ item.windSpeed }}km/h</td>
