@@ -7,26 +7,26 @@
       >
         <input
           v-model.lazy="info.location"
-          class="bg-white w-1/3 mb-6 mt-20 focus:outline-none focus:shadow-outline border border-gray-500 text-black rounded-lg py-2 px-4 block appearance-none leading-normal"
+          class="bg-white w-2/3 md:w-1/3 mb-6 mt-8 lg:mt-20 focus:outline-none focus:shadow-outline border border-gray-500 text-black rounded-lg py-2 px-4 block appearance-none leading-normal"
           type="city"
           placeholder="Entry your location"
         />
-        <div class="flex w-1/3 justify-space-around">
+        <div class="flex flex-col lg:w-1/3 lg:flex-row justify-space-around">
           <button
-            class="bg-blue-500 rounded py-1 px-2 mb-6"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-6"
             @click="showWeather"
           >
-            Show weather
+            Find and save
           </button>
           <button
-            class="bg-blue-500 rounded py-1 px-2 mb-6"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-6"
             @click="saveLocally"
           >
-            Save locally
+            Find and save locally
           </button>
         </div>
         <template class="bg-white">
-          <v-card class="mx-auto shadow" min-width="400" max-width="600">
+          <v-card class="mx-auto shadow" min-width="300" max-width="600">
             <v-list-item two-line>
               <v-list-item-content>
                 <v-list-item-title class="headline">{{
@@ -69,9 +69,9 @@
         </template>
       </v-container>
     </v-main>
-    <div class="mt-6 mb-20">
+    <div class="mt-6 lg:mb-20 lg:w-5/6 overflow-x-auto" min-width="375">
       <table class="table-auto">
-        <thead class="w-2/3">
+        <thead>
           <tr>
             <th class="px-4 py-2">Index</th>
             <th class="px-4 py-2">Location</th>
@@ -92,13 +92,6 @@
 </template>
 
 <script>
-/* :location="location.location"
-          :timestamp="location.timestamp"
-          :timezone="location.timezone"
-          :description="ilocation.description"
-          :temp="location.temp"
-          :wind-speed="location.windSpeed"
-          :humidity="location.humidity" */
 import axios from 'axios'
 import weatherTable from '../components/weatherTable.vue'
 export default {
@@ -202,7 +195,6 @@ export default {
               ]
               const parsed = JSON.stringify(this.savedLocally)
               localStorage.setItem('savedLocally', parsed)
-              console.log(this.savedLocally)
             })
         })
     },
